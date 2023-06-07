@@ -12,6 +12,7 @@ import { api } from "~/utils/api";
 import { dark } from "@clerk/themes";
 import Image from "next/image";
 import Info from "~/components/Info";
+import Player from "~/components/Player";
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -61,6 +62,7 @@ const Home: NextPage = () => {
         <div className="flex h-full w-full flex-col items-center justify-center p-4 md:w-1/3 ">
           <div className="w-full flex-grow">
             <GuestList />
+            <Player />
           </div>
           <footer className="flex w-full">
             <Guess />

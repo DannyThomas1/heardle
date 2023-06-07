@@ -1,7 +1,17 @@
 import Image from "next/image";
-
+import { useState } from "react";
+import { Modal } from "./Modal";
 function Info() {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
   return (
     <>
       <Image
@@ -9,39 +19,24 @@ function Info() {
         alt="stats"
         width={30}
         height={30}
-        // onClick={onOpen}
+        onClick={openModal}
       />
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        modalHeader="How to Play"
+      >
+        <ul className="flex list-disc flex-col gap-4 px-4 py-2">
+          <li>
+            Listen to the intro,start typing your answer to what song it could
+            be and hit submit.
+          </li>
 
-      {/* <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent color="white" bg="gray.800">
-          <ModalHeader>How to Play</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <ul className="flex list-disc flex-col gap-4 px-4 py-2">
-              <li>
-                Listen to the intro,start typing your answer to what song it
-                could be and hit submit.
-              </li>
+          <li>Skipped or incorrect attempts unlock more of the intro</li>
 
-              <li>Skipped or incorrect attempts unlock more of the intro</li>
-
-              <li>Answer in as few tries as possible and share your score!</li>
-            </ul>
-          </ModalBody>
-
-          {/* <ModalFooter>
-            <button
-              className="border-2 border-white bg-transparent"
-              onClick={onClose}
-            >
-              Close
-            </button>
-            <button>Secondary Action</button>
-          </ModalFooter> 
-        </ModalContent>
-      </Modal> 
-    */}
+          <li>Answer in as few tries as possible and share your score!</li>
+        </ul>
+      </Modal>
     </>
   );
 }

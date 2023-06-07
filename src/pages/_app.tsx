@@ -4,6 +4,7 @@ import "~/styles/globals.css";
 import Head from "next/head";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import Script from "next/script";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
@@ -22,6 +23,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           />
           <link rel="icon" href="/logo.svg" />
         </Head>
+
         <Component {...pageProps} />
       </ClerkProvider>
     </>
