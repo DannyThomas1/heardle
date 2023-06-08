@@ -62,10 +62,9 @@ const Home: NextPage = () => {
         <div className="flex h-full w-full flex-col items-center justify-center p-4 md:w-1/3 ">
           <div className="w-full flex-grow">
             <GuestList />
-            <Player />
           </div>
           <footer className="flex w-full">
-            <Guess />
+            <Player />
           </footer>
         </div>
       </div>
