@@ -36,32 +36,47 @@ function Player() {
   }, []);
 
   const guessToSeconds: { [key: number]: number } = {
-    1: 1000,
-    2: 2000,
-    3: 4000,
-    4: 7000,
-    5: 13000,
-    6: 16000,
+    1: 2000,
+    2: 3000,
+    3: 5000,
+    4: 8000,
+    5: 14000,
+    6: 17000,
   };
 
-  const setTimer = (guessNum: number) => {
-    if (!player) {
+  const playSong = (guessNumber: number) => {
+    if (!player || !guessNum) {
       setIsPlaying(false);
       return;
     }
 
-    setTimeout(() => {
-      player.pause();
-      setIsPlaying(false);
-      player.seekTo(0);
-    }, guessToSeconds[guessNum]);
+    let counterID = setInterval(() => setCounter((prev) => prev + 1), 1000);
+
+    if (guessToSeconds[guessNumber]) {
+      createTimer(guessToSeconds[guessNumber] || 1000, counterID);
+    }
   };
 
-  const playSelected = (guessNum: number) => {
+  const createTimer = (guessNumber: number, counterID: any) => {
+    if (!player) return;
+    setTimeout(
+      (counterID) => {
+        player.pause();
+        setIsPlaying(false);
+        player.seekTo(0);
+        clearInterval(counterID);
+        setCounter(0);
+      },
+      guessNumber,
+      counterID
+    );
+  };
+
+  const playSelected = (guessNumber: number) => {
     if (!player) return;
 
     setIsPlaying(true);
-    player.bind((window as any)?.SC.Widget.Events.PLAY, setTimer(guessNum));
+    player.bind((window as any)?.SC.Widget.Events.PLAY, playSong(guessNumber));
   };
 
   const skipSelected = () => {
@@ -100,7 +115,7 @@ function Player() {
       <Guess guessNum={guessNum} isPlaying={isPlaying} />
 
       <div className="flex w-full items-center justify-between">
-        <div>0:00</div>
+        <div>0:{String(counter).padStart(2, "0")}</div>
         <div className="my-3">
           {loading ? (
             <LoadingSpinner size={25} />
