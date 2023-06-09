@@ -23,6 +23,8 @@ function Player() {
   const [loading, setLoading] = useState(false);
   const [guessNum, setGuessNum] = useState(1);
   const [counter, setCounter] = useState(0);
+  const [counterID, setCounterID] = useState("");
+  const [timerID, setTimerID] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -51,15 +53,16 @@ function Player() {
     }
 
     let counterID = setInterval(() => setCounter((prev) => prev + 1), 1000);
-
+    setCounterID(String(counterID));
     if (guessToSeconds[guessNumber]) {
-      createTimer(guessToSeconds[guessNumber] || 1000, counterID);
+      let timerId = createTimer(guessToSeconds[guessNumber] || 1000, counterID);
+      setTimerID(String(timerId));
     }
   };
 
   const createTimer = (guessNumber: number, counterID: any) => {
     if (!player) return;
-    setTimeout(
+    return setTimeout(
       (counterID) => {
         player.pause();
         setIsPlaying(false);
@@ -79,7 +82,22 @@ function Player() {
     player.bind((window as any)?.SC.Widget.Events.PLAY, playSong(guessNumber));
   };
 
+  const pauseSelected = (counterID: string) => {
+    setIsPlaying(false);
+    setCounter(0);
+    clearInterval(counterID);
+  };
+
+  const reset = (counterID: string, timerID: string) => {
+    setIsPlaying(false);
+    setCounter(0);
+    clearInterval(counterID);
+    clearTimeout(timerID);
+  };
+
   const skipSelected = () => {
+    reset(counterID, timerID);
+
     let numGuesses = guessNum;
     if (numGuesses !== 6) {
       setGuessNum((currentGuessNum) => currentGuessNum + 1);
@@ -107,12 +125,12 @@ function Player() {
       <iframe
         id="sc-widget"
         src="https://w.soundcloud.com/player/?url=https://soundcloud.com/youngthegiant/my-way"
-        width={100}
-        height={100}
+        width={0}
+        height={0}
         allow="autoplay"
       ></iframe>
 
-      <Guess guessNum={guessNum} isPlaying={isPlaying} />
+      <Guess guessNum={guessNum} isPlaying={isPlaying} counter={counter} />
 
       <div className="flex w-full items-center justify-between">
         <div>0:{String(counter).padStart(2, "0")}</div>
@@ -129,7 +147,7 @@ function Player() {
               onClick={() => playSelected(guessNum)}
             />
           ) : (
-            <AudioPlaying onClick={() => setIsPlaying(false)} />
+            <AudioPlaying onClick={() => pauseSelected(counterID)} />
           )}
         </div>
         <div>0:17</div>
