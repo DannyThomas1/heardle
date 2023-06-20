@@ -15,6 +15,15 @@ import { useEffect, useState } from "react";
 import SongCard from "~/components/SongCard";
 import { type UserStats } from "./types/types";
 
+function initLocalStorage() {
+  const statsObj = {
+    guessList: [],
+    hasFinished: false,
+    date: new Date()?.toLocaleDateString(),
+  };
+  localStorage.setItem("userStats", JSON.stringify(statsObj));
+}
+
 const Home: NextPage = () => {
   const { isSignedIn } = useUser();
   const [correctGuess, setCorrectGuess] = useState(false);
@@ -23,28 +32,16 @@ const Home: NextPage = () => {
   useEffect(() => {
     const stats = localStorage.getItem("userStats");
     if (!stats) {
-      const statsObj = {
-        guessList: [],
-        hasFinished: false,
-        date: new Date()?.toLocaleDateString(),
-      };
-      localStorage.setItem("userStats", JSON.stringify(statsObj));
+      initLocalStorage();
     } else {
       const todaysDate = new Date()?.toLocaleDateString();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const userStats = JSON.parse(stats) as UserStats;
-
       if (userStats?.date === todaysDate) {
         if (userStats?.guessList?.length)
           updateGuessNum(userStats?.guessList?.length + 1);
         if (userStats?.hasFinished) setCorrectGuess(userStats?.hasFinished);
       } else {
-        const statsObj = {
-          guessList: [],
-          hasFinished: false,
-          date: new Date()?.toLocaleDateString(),
-        };
-        localStorage.setItem("userStats", JSON.stringify(statsObj));
+        initLocalStorage();
       }
     }
   }, []);

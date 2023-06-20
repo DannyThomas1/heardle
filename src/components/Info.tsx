@@ -36,28 +36,28 @@ function Info() {
       >
         <div>
           <ul className="flex flex-col gap-4 px-4 py-2">
-            <li className="flex gap-2">
+            <li className="flex items-center justify-start gap-2">
               <Image
                 src={"/assets/volume-up.svg"}
                 alt="stats"
                 width={30}
                 height={30}
               />
-              Listen to the intro,start typing your answer to what song it could
-              be and hit submit.
+              Listen to the intro, start typing your answer to what song it
+              could be and hit submit.
             </li>
 
-            <li className="flex gap-2">
+            <li className="flex items-center justify-start gap-2">
               <Image
                 src={"/assets/play-pause.svg"}
                 alt="stats"
                 width={30}
                 height={30}
               />
-              Skipped or incorrect attempts unlock more of the intro
+              Skipped or incorrect attempts unlock more of the intro.
             </li>
 
-            <li className="flex gap-2">
+            <li className="flex items-center justify-start gap-2">
               <Image
                 src={"/assets/music-note.svg"}
                 alt="stats"
@@ -67,7 +67,7 @@ function Info() {
               Answer in as few tries as possible and share your score!
             </li>
 
-            <li className="flex gap-2">
+            <li className="flex items-center justify-start gap-2">
               <Image
                 src={"/assets/joystick.svg"}
                 alt="stats"
