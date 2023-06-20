@@ -1,14 +1,58 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { GuessContext } from "~/context/guess";
+import useDebounce from "~/hooks/debouce";
+import { api, type RouterOutputs } from "~/utils/api";
+
+type Song = RouterOutputs["songs"]["todaysSong"];
 
 const SearchBar = ({
   skipSelected,
-  submitSelected,
+  correctSelected,
+  guessSubmitted,
+  guessNumber,
+  todaysSong,
 }: {
   skipSelected: () => void;
-  submitSelected: () => void;
+  correctSelected: (x: boolean) => void;
+  guessSubmitted: () => void;
+  guessNumber: number;
+  todaysSong: Song | undefined;
 }) => {
+  const guessContext = useContext(GuessContext);
   const [input, setInput] = useState("");
+  const debouncedSearch = useDebounce(input, 500);
+  const [selected, setSelected] = useState<Song | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+
+  const { data } = api.songs.getAll.useQuery(
+    {
+      search: debouncedSearch,
+    },
+    {
+      enabled: debouncedSearch !== "" && !selected,
+    }
+  );
+
+  const submitClicked = () => {
+    if (!selected) return;
+
+    if (selected?.name === todaysSong?.name) {
+      correctSelected(true);
+    } else {
+      if (selected?.artist === todaysSong?.artist) {
+        guessContext?.addGuess({ song: selected?.name, status: "partial" });
+      } else {
+        guessContext?.addGuess({ song: selected?.name, status: "incorrect" });
+      }
+      guessSubmitted();
+      setInput("");
+      setSelected(null);
+    }
+  };
 
   return (
     <div className="flex w-full flex-col gap-5">
@@ -20,21 +64,27 @@ const SearchBar = ({
           height={30}
           className="absolute inset-y-3 left-0 flex items-center pl-2"
         />
+        <div className="absolute bottom-16 right-0 z-30 w-full bg-black">
+          {!selected &&
+            input &&
+            data?.map((song) => (
+              <div
+                key={song.id}
+                className="p-1 hover:text-green-500"
+                onClick={() => {
+                  setSelected(song);
+                  setInput(song.name);
+                }}
+              >
+                {song.name}
+              </div>
+            ))}
+        </div>
         <input
           placeholder="Type some emojis!"
-          className=" block w-full flex-grow rounded-md border-2 border-gray-600 bg-black/20 p-3 py-2 pl-9 pr-3 outline-none focus:border-2 focus:border-green-500"
-          type="text"
+          className=" block w-full flex-grow truncate rounded-md border-2 border-gray-600 bg-black/20 p-3 py-2 pl-9 pr-3 outline-none focus:border-2 focus:border-green-500"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          //   disabled={isPosting}
-          onKeyDown={(e) => {
-            // if (e.key === "Enter") {
-            //   e.preventDefault();
-            //   if (input !== "") {
-            //     mutate({ content: input });
-            //   }
-            // }
-          }}
+          onChange={handleChange}
         />
         <Image
           src={"/assets/close.svg"}
@@ -42,6 +92,10 @@ const SearchBar = ({
           width={30}
           height={30}
           className="absolute inset-y-3 right-0 flex items-center pr-2"
+          onClick={() => {
+            setInput("");
+            setSelected(null);
+          }}
         />
       </div>
 
@@ -50,11 +104,11 @@ const SearchBar = ({
           className="text-md rounded-md bg-slate-700 p-2 tracking-wider text-white hover:bg-slate-600"
           onClick={skipSelected}
         >
-          Skip (+1s)
+          Skip (+{guessNumber}s)
         </button>
         <button
           className="text-md rounded-md bg-green-600 p-2 tracking-wider text-white hover:bg-green-500"
-          onClick={submitSelected}
+          onClick={submitClicked}
         >
           Submit
         </button>

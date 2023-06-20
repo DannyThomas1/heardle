@@ -6,17 +6,19 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import { type NextPage } from "next";
-import { Guess } from "~/components/Guess";
-import { GuestList } from "~/components/GuessList";
-import { api } from "~/utils/api";
+import { GuessList } from "~/components/GuessList";
 import { dark } from "@clerk/themes";
 import Image from "next/image";
 import Info from "~/components/Info";
 import Player from "~/components/Player";
+import { useState } from "react";
+import SongCard from "~/components/SongCard";
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const { isSignedIn } = useUser();
+  const [correctGuess, setCorrectGuess] = useState(false);
+  const [guessNum, updateGuessNum] = useState(1);
 
   return (
     <main className="flex min-h-screen w-screen justify-center">
@@ -60,12 +62,21 @@ const Home: NextPage = () => {
         </header>
 
         <div className="flex h-full w-full flex-col items-center justify-center p-4 md:w-1/3 ">
-          <div className="w-full flex-grow">
-            <GuestList />
-          </div>
-          <footer className="flex w-full">
-            <Player />
-          </footer>
+          {guessNum >= 7 || correctGuess ? (
+            <SongCard guessNum={guessNum} />
+          ) : (
+            <>
+              <div className="w-full flex-grow">
+                <GuessList />
+              </div>
+              <footer className="flex w-full">
+                <Player
+                  updateGuess={setCorrectGuess}
+                  updateGuessNum={updateGuessNum}
+                />
+              </footer>
+            </>
+          )}
         </div>
       </div>
     </main>

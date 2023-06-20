@@ -1,11 +1,20 @@
 /* eslint-disable */
-import Script from "next/script";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import { AudioPlaying } from "./AudioPlaying";
 import { LoadingSpinner } from "./Loading";
 import SearchBar from "./SearchBar";
 import { Guess } from "./Guess";
+import {
+  FIFTH_CLIP,
+  FIRST_CLIP,
+  FOURTH_CLIP,
+  SECOND_CLIP,
+  SIXTH_CLIP,
+  THIRD_CLIP,
+} from "~/constants";
+import { api } from "~/utils/api";
+import { SongContext } from "~/context/context";
 
 interface Player {
   isPaused: (x: (b: boolean) => void) => void;
@@ -15,9 +24,17 @@ interface Player {
   seekTo: (x: number) => void;
   bind: (x: string, y: any) => void;
   unbind: (x: string) => void;
+  getCurrentSound: (x: (x: any) => void) => void;
+  load: (x: string) => void;
 }
 
-function Player() {
+function Player({
+  updateGuess,
+  updateGuessNum,
+}: {
+  updateGuess: (x: boolean) => void;
+  updateGuessNum: (x: number) => void;
+}) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState<Player>();
   const [loading, setLoading] = useState(false);
@@ -25,25 +42,43 @@ function Player() {
   const [counter, setCounter] = useState(0);
   const [counterID, setCounterID] = useState("");
   const [timerID, setTimerID] = useState("");
+  const songContext = useContext(SongContext);
+
+  const todaysSong = api.songs.todaysSong.useQuery().data;
 
   useEffect(() => {
     setLoading(true);
     const widgetIFrame = document.getElementById("sc-widget");
     const widget = (window as any)?.SC?.Widget(widgetIFrame);
-    widget.bind((window as any)?.SC.Widget.Events.READY, () =>
-      setLoading(false)
-    );
+    widget.bind((window as any)?.SC.Widget.Events.READY, () => {
+      setLoading(false);
+    });
 
     setPlayer(widget);
   }, []);
 
+  useEffect(() => {
+    if (!player || !todaysSong) return;
+
+    player.load(todaysSong?.url);
+
+    player.bind((window as any)?.SC.Widget.Events.READY, () => {
+      player.getCurrentSound((currentSound: any) => {
+        if (currentSound) {
+          console.log(currentSound);
+          songContext?.setCurrentSong(currentSound);
+        }
+      });
+    });
+  }, [todaysSong]);
+
   const guessToSeconds: { [key: number]: number } = {
-    1: 2000,
-    2: 3000,
-    3: 5000,
-    4: 8000,
-    5: 14000,
-    6: 17000,
+    1: FIRST_CLIP,
+    2: SECOND_CLIP,
+    3: THIRD_CLIP,
+    4: FOURTH_CLIP,
+    5: FIFTH_CLIP,
+    6: SIXTH_CLIP,
   };
 
   const playSong = (guessNumber: number) => {
@@ -79,6 +114,7 @@ function Player() {
     if (!player) return;
 
     setIsPlaying(true);
+    player.play();
     player.bind((window as any)?.SC.Widget.Events.PLAY, playSong(guessNumber));
   };
 
@@ -88,43 +124,44 @@ function Player() {
     clearInterval(counterID);
   };
 
-  const reset = (counterID: string, timerID: string) => {
+  const reset = async (counterID: string, timerID: string) => {
     setIsPlaying(false);
     setCounter(0);
     clearInterval(counterID);
     clearTimeout(timerID);
   };
 
-  const skipSelected = () => {
-    reset(counterID, timerID);
+  const skipSelected = async () => {
+    await reset(counterID, timerID);
 
     let numGuesses = guessNum;
     if (numGuesses !== 6) {
       setGuessNum((currentGuessNum) => currentGuessNum + 1);
       numGuesses++;
-    } else console.log("Finished Game");
-
-    playSelected(numGuesses);
+      updateGuessNum(numGuesses);
+      playSelected(numGuesses);
+    } else {
+      updateGuessNum(7);
+    }
   };
 
-  // adjust playback in SC player to match isPlaying state
-  useEffect(() => {
-    if (!player) return; // player loaded async - make sure available
-
-    player.isPaused((playerIsPaused: boolean) => {
-      if (isPlaying && playerIsPaused) {
-        player.play();
-      } else if (!isPlaying && !playerIsPaused) {
-        player.pause();
-      }
-    });
-  }, [isPlaying]);
+  const guessSubmitted = () => {
+    let numGuesses = guessNum;
+    if (numGuesses !== 6) {
+      setGuessNum((currentGuessNum) => currentGuessNum + 1);
+      numGuesses++;
+      updateGuessNum(numGuesses);
+      playSelected(numGuesses);
+    } else {
+      updateGuessNum(7);
+    }
+  };
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
       <iframe
         id="sc-widget"
-        src="https://w.soundcloud.com/player/?url=https://soundcloud.com/youngthegiant/my-way"
+        src={`https://w.soundcloud.com/player/?url=https://soundcloud.com/edsheeran/ed-sheeran-bad-habits`}
         width={0}
         height={0}
         allow="autoplay"
@@ -154,7 +191,13 @@ function Player() {
       </div>
 
       <div className="mt-3 w-full">
-        <SearchBar skipSelected={skipSelected} submitSelected={() => {}} />
+        <SearchBar
+          skipSelected={skipSelected}
+          guessSubmitted={guessSubmitted}
+          correctSelected={() => updateGuess(true)}
+          guessNumber={guessNum}
+          todaysSong={todaysSong}
+        />
       </div>
     </div>
   );

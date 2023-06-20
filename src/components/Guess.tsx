@@ -1,6 +1,14 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Player from "./Player";
+import {
+  FIFTH_CLIP,
+  FIRST_CLIP,
+  FOURTH_CLIP,
+  SECOND_CLIP,
+  SIXTH_CLIP,
+  THIRD_CLIP,
+} from "~/constants";
 
 export const Guess = ({
   guessNum,
@@ -16,30 +24,30 @@ export const Guess = ({
   const setWidths = (guessNum: number) => {
     switch (guessNum) {
       case 1:
-        setPlayWidth((2000 / 17000) * 100);
-        return 2000;
+        setPlayWidth((FIRST_CLIP / SIXTH_CLIP) * 100);
+        return FIRST_CLIP;
 
       case 2:
-        setPlayWidth((3000 / 17000) * 100);
-        return 3000;
+        setPlayWidth((SECOND_CLIP / SIXTH_CLIP) * 100);
+        return SECOND_CLIP;
 
       case 3:
-        setPlayWidth((5000 / 17000) * 100);
-        return 5000;
+        setPlayWidth((THIRD_CLIP / SIXTH_CLIP) * 100);
+        return THIRD_CLIP;
 
       case 4:
-        setPlayWidth((8000 / 17000) * 100);
-        return 8000;
+        setPlayWidth((FOURTH_CLIP / SIXTH_CLIP) * 100);
+        return FOURTH_CLIP;
 
       case 5:
-        setPlayWidth((14000 / 17000) * 100);
-        return 14000;
+        setPlayWidth((FIFTH_CLIP / SIXTH_CLIP) * 100);
+        return FIFTH_CLIP;
 
       case 6:
         setPlayWidth(100);
-        return 17000;
+        return SIXTH_CLIP;
       default:
-        return 2000;
+        return FIRST_CLIP;
     }
   };
 
@@ -85,43 +93,47 @@ export const Guess = ({
   }
 
   return (
-    <div className="relative flex w-full flex-col gap-4">
-      <div
-        className="absolute left-[2px] top-[2px] z-10 flex h-[12px] items-center justify-start bg-gray-800 "
-        style={{ width: `${playWidth}%` }}
-      >
-        <span
-          ref={ref}
-          className={`h-[15px] bg-green-600 transition `}
-          style={{ width: "10px" }}
-        ></span>
-      </div>
+    <div className="flex w-screen items-center justify-center border-y-2 border-gray-800">
+      <div className="flex w-full items-center justify-center px-3 md:w-1/3">
+        <div className="relative flex w-full flex-col gap-4">
+          <div
+            className="absolute left-[2px] top-[2px] z-10 flex h-[12px] items-center justify-start bg-gray-800 "
+            style={{ width: `${playWidth}%` }}
+          >
+            <span
+              ref={ref}
+              className={`h-[15px] bg-green-600 transition `}
+              style={{ width: "10px" }}
+            ></span>
+          </div>
 
-      <div className="relative flex h-[16px] w-full items-center justify-between border-2 border-gray-600 ">
-        <span
-          className={`absolute z-20  h-[11px] border-r `}
-          style={{ width: `${(2000 / 17000) * 100}%` }}
-        ></span>
-        <span
-          className={`absolute z-20  h-[11px] border-r `}
-          style={{ width: `${(3000 / 17000) * 100}%` }}
-        ></span>
-        <span
-          className={`absolute z-20  h-[11px] border-r `}
-          style={{ width: `${(5000 / 17000) * 100}%` }}
-        ></span>
-        <span
-          className={`absolute z-20  h-[11px] border-r `}
-          style={{ width: `${(8000 / 17000) * 100}%` }}
-        ></span>
-        <span
-          className={`absolute z-20  h-[11px] border-r `}
-          style={{ width: `${(14000 / 17000) * 100}%` }}
-        ></span>
-        <span
-          className={`absolute z-20  h-[11px] border-r `}
-          style={{ width: `${(17000 / 17000) * 100}%` }}
-        ></span>
+          <div className="relative flex h-[16px] w-full items-center justify-between border-2 border-gray-700 ">
+            <span
+              className={`absolute z-20  h-[11px] border-r `}
+              style={{ width: `${(FIRST_CLIP / SIXTH_CLIP) * 100}%` }}
+            ></span>
+            <span
+              className={`absolute z-20  h-[11px] border-r `}
+              style={{ width: `${(SECOND_CLIP / SIXTH_CLIP) * 100}%` }}
+            ></span>
+            <span
+              className={`absolute z-20  h-[11px] border-r `}
+              style={{ width: `${(THIRD_CLIP / SIXTH_CLIP) * 100}%` }}
+            ></span>
+            <span
+              className={`absolute z-20  h-[11px] border-r `}
+              style={{ width: `${(FOURTH_CLIP / SIXTH_CLIP) * 100}%` }}
+            ></span>
+            <span
+              className={`absolute z-20  h-[11px] border-r `}
+              style={{ width: `${(FIFTH_CLIP / SIXTH_CLIP) * 100}%` }}
+            ></span>
+            <span
+              className={`absolute z-20  h-[11px] border-r `}
+              style={{ width: `${(SIXTH_CLIP / SIXTH_CLIP) * 100}%` }}
+            ></span>
+          </div>
+        </div>
       </div>
     </div>
   );
