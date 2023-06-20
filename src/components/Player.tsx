@@ -118,11 +118,15 @@ function Player({
     player.bind((window as any)?.SC.Widget.Events.PLAY, playSong(guessNumber));
   };
 
-  const pauseSelected = (counterID: string) => {
+  const pauseSelected = (counterID: string, timerID: string) => {
     setIsPlaying(false);
-    setCounter(0);
     clearInterval(counterID);
+    clearTimeout(timerID)
+    setCounter(0);
+    player?.seekTo(0);
   };
+
+
 
   const reset = async (counterID: string, timerID: string) => {
     setIsPlaying(false);
@@ -157,6 +161,19 @@ function Player({
     }
   };
 
+  // adjust playback in SC player to match isPlaying state
+  useEffect(() => {
+    if (!player) return; // player loaded async - make sure available
+
+    player.isPaused((playerIsPaused: boolean) => {
+      if (isPlaying && playerIsPaused) {
+        player.play();
+      } else if (!isPlaying && !playerIsPaused) {
+        player.pause();
+      }
+    });
+  }, [isPlaying]);
+
   return (
     <div className="flex w-full flex-col items-center justify-center">
       <iframe
@@ -184,7 +201,7 @@ function Player({
               onClick={() => playSelected(guessNum)}
             />
           ) : (
-            <AudioPlaying onClick={() => pauseSelected(counterID)} />
+            <AudioPlaying onClick={() => pauseSelected(counterID, timerID)} />
           )}
         </div>
         <div>0:17</div>

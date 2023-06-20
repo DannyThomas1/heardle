@@ -54,6 +54,12 @@ const SearchBar = ({
     }
   };
 
+  const skipClicked = () => {
+    guessContext?.addGuess({ song: "Skipped", status: "skipped" });
+    skipSelected()
+
+  }
+
   return (
     <div className="flex w-full flex-col gap-5">
       <div className="relative block">
@@ -102,7 +108,7 @@ const SearchBar = ({
       <div className="my-3 flex w-full items-center justify-between">
         <button
           className="text-md rounded-md bg-slate-700 p-2 tracking-wider text-white hover:bg-slate-600"
-          onClick={skipSelected}
+          onClick={skipClicked}
         >
           Skip (+{guessNumber}s)
         </button>

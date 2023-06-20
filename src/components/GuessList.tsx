@@ -26,22 +26,35 @@ export const GuessList = () => {
           key={i}
           className=" flex h-[30px] w-full items-center justify-start gap-2 rounded-sm border-2 border-gray-800 p-1 md:h-[40px]"
         >
-          {guess?.status !== "" && (
-            <Image
-              src={"/assets/wrong.svg"}
-              alt="wrong"
-              width={20}
-              height={20}
-              className={`${guess?.status === "partial" ? "text-yellow-400" : "text-white"
-                }`}
-            />
-          )}
-          <p
-            className={`${guess?.status === "partial" ? "text-yellow-400" : "text-white"
-              } overflow-hidden truncate`}
-          >
-            {guess?.song}
-          </p>
+          {guess?.status === "skipped" ?
+            <>
+              <span className="w-2 h-2 border  p-1 border-gray-500 "></span>
+              <p
+                className={`text-gray-500 overflow-hidden truncate capitalize`}
+              >
+                {guess?.song}
+              </p>
+            </>
+            :
+            <>
+              {guess?.status !== "" && (
+                <Image
+                  src={"/assets/wrong.svg"}
+                  alt="wrong"
+                  width={20}
+                  height={20}
+                  className={`${guess?.status === "partial" ? "text-yellow-400" : "text-white"
+                    }`}
+                />
+              )}
+              <p
+                className={`${guess?.status === "partial" ? "text-yellow-400" : "text-white"
+                  } overflow-hidden truncate`}
+              >
+                {guess?.song}
+              </p>
+            </>
+          }
         </div>
       ))}
     </div>

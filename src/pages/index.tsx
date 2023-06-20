@@ -42,7 +42,7 @@ const Home: NextPage = () => {
       <div className="flex h-screen w-full flex-col items-center bg-black">
         <header className="flex h-24 w-full items-center justify-center gap-4 border-b-2 border-green-600">
           <div className="flex w-full items-center px-3 py-2 lg:w-1/3">
-            <div className="flex gap-3">
+            <div className="flex gap-3 w-1/4">
               <Info />
               {isSignedIn && (
                 <Image
@@ -53,12 +53,12 @@ const Home: NextPage = () => {
                 />
               )}
             </div>
-            <div className="flex flex-grow items-center justify-center">
+            <div className="flex-grow justify-center items-center flex w-1/2">
               <h1 className="font-sans text-2xl tracking-wider text-white lg:text-5xl">
                 Heardle
               </h1>
             </div>
-            <div className="">
+            <div className="flex items-center justify-end w-1/4">
               <SignedIn>
                 <UserButton
                   afterSignOutUrl="/"
@@ -78,7 +78,7 @@ const Home: NextPage = () => {
           </div>
         </header>
 
-        <div className="flex h-full w-full flex-col items-center justify-center p-4 lg:w-1/3 ">
+        <div className="flex flex-grow w-full flex-col items-center justify-center p-4 lg:w-1/3 ">
           {guessNum >= 7 || correctGuess ? (
             <SongCard guessNum={guessNum} />
           ) : (
