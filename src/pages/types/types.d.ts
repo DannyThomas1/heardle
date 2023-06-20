@@ -1,5 +1,5 @@
 export interface UserStats {
-  date: Date;
+  date: string;
   guessList: { song: string; status: string }[];
   hasFinished: boolean;
 }

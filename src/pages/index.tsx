@@ -26,14 +26,26 @@ const Home: NextPage = () => {
       const statsObj = {
         guessList: [],
         hasFinished: false,
+        date: new Date()?.toLocaleDateString(),
       };
       localStorage.setItem("userStats", JSON.stringify(statsObj));
     } else {
+      const todaysDate = new Date()?.toLocaleDateString();
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const userStats = JSON.parse(stats) as UserStats;
-      if (userStats?.guessList?.length)
-        updateGuessNum(userStats?.guessList?.length + 1);
-      if (userStats?.hasFinished) setCorrectGuess(userStats?.hasFinished);
+
+      if (userStats?.date === todaysDate) {
+        if (userStats?.guessList?.length)
+          updateGuessNum(userStats?.guessList?.length + 1);
+        if (userStats?.hasFinished) setCorrectGuess(userStats?.hasFinished);
+      } else {
+        const statsObj = {
+          guessList: [],
+          hasFinished: false,
+          date: new Date()?.toLocaleDateString(),
+        };
+        localStorage.setItem("userStats", JSON.stringify(statsObj));
+      }
     }
   }, []);
 
