@@ -1,27 +1,37 @@
 /* eslint-disable */
 import Image from "next/image";
-import React, { useContext, useEffect } from "react";
-import { SongContext } from "~/context/context";
-import { LoadingPage } from "./Loading";
+import React, { useContext, useEffect, useState } from "react";
+import { LoadingPage, LoadingSpinner } from "./Loading";
 import { api } from "~/utils/api";
 
 function SongCard({ guessNum }: { guessNum: number }) {
-  const songContext = useContext(SongContext);
-  const song = songContext?.currentSong;
-  const todaysSong = api.songs.todaysSong.useQuery().data;
+  const todaysSong = api.songs.todaysSong.useQuery(undefined, {
+    enabled: false,
+    staleTime: Infinity,
+  }).data;
+  const [loading, setLoading] = useState(true);
+  const [songArtwork, setSongArtwork] = useState("");
 
   useEffect(() => {
     if (!todaysSong) return;
-
-    const widgetIFrame = document.getElementById("sc-widget");
-    const widget = (window as any)?.SC?.Widget(widgetIFrame);
-    widget.bind((window as any)?.SC.Widget.Events.READY, () => {
-      widget.load(todaysSong?.url, { show_artwork: false, auto_play: true });
-      widget.play();
-    });
+    try {
+      const widgetIFrame = document.getElementById("sc-widget");
+      const widget = (window as any)?.SC?.Widget(widgetIFrame);
+      widget.bind((window as any)?.SC.Widget.Events.READY, () => {
+        widget.load(todaysSong?.url, { show_artwork: false, auto_play: true });
+        widget.bind((window as any)?.SC.Widget.Events.READY, () => {
+          widget.getCurrentSound((song: any) => {
+            if (!song) return;
+            setSongArtwork(song?.artwork_url?.replace("-large", "-t200x200"));
+          });
+        });
+        widget.play();
+        setLoading(false);
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }, [todaysSong]);
-
-  if (!todaysSong || !song) return <LoadingPage />;
 
   return (
     <div className="my-20 flex h-full w-full flex-col items-center justify-start gap-4">
@@ -40,16 +50,24 @@ function SongCard({ guessNum }: { guessNum: number }) {
           </div>
         </div>
       )}
-
-      <div className="flex w-full items-center justify-center">
-        <Image
-          src={song?.artwork_url}
-          alt="song artwork"
-          width={200}
-          height={200}
-        />
+      {loading || !songArtwork ? (
+        <LoadingSpinner size={15} />
+      ) : (
+        <div className="flex w-full items-center justify-center">
+          <Image
+            src={songArtwork}
+            alt="song artwork"
+            width={200}
+            height={200}
+          />
+        </div>
+      )}
+      <div className="flex flex-col items-center justify-center gap-1">
+        <h1 className="text-2xl font-bold tracking-wide">
+          {todaysSong?.title}
+        </h1>
+        <p className="text-lg text-gray-400">{todaysSong?.artist}</p>
       </div>
-      <div className="font-bold tracking-wide">{song?.title}</div>
       <div className="flex w-full flex-row items-center justify-center gap-3">
         <span
           className={`content h-2 w-6 ${
@@ -106,7 +124,6 @@ function SongCard({ guessNum }: { guessNum: number }) {
           }`}
         ></span>
       </div>
-
       <div className="my-5">
         <iframe
           id="sc-widget"

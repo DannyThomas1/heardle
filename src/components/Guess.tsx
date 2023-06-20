@@ -83,7 +83,7 @@ export const Guess = ({
     setWidths(guessNum);
 
     return () => resetProgressBar();
-  }, [isPlaying]);
+  }, [isPlaying, guessNum]);
 
   function resetProgressBar() {
     if (!ref.current) return;

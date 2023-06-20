@@ -15,6 +15,7 @@ import {
 } from "~/constants";
 import { api } from "~/utils/api";
 import { SongContext } from "~/context/context";
+import { UserStats } from "~/pages/types/types";
 
 interface Player {
   isPaused: (x: (b: boolean) => void) => void;
@@ -29,10 +30,10 @@ interface Player {
 }
 
 function Player({
-  updateGuess,
+  updateCorrectGuess,
   updateGuessNum,
 }: {
-  updateGuess: (x: boolean) => void;
+  updateCorrectGuess: (x: boolean) => void;
   updateGuessNum: (x: number) => void;
 }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -45,6 +46,15 @@ function Player({
   const songContext = useContext(SongContext);
 
   const todaysSong = api.songs.todaysSong.useQuery().data;
+
+  useEffect(() => {
+    const stats = localStorage.getItem("userStats");
+    if (!stats) return;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const userStats = JSON.parse(stats) as UserStats;
+    console.log(userStats?.guessList?.length);
+    if (userStats?.guessList?.length) setGuessNum(userStats?.guessList?.length);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -121,12 +131,10 @@ function Player({
   const pauseSelected = (counterID: string, timerID: string) => {
     setIsPlaying(false);
     clearInterval(counterID);
-    clearTimeout(timerID)
+    clearTimeout(timerID);
     setCounter(0);
     player?.seekTo(0);
   };
-
-
 
   const reset = async (counterID: string, timerID: string) => {
     setIsPlaying(false);
@@ -211,7 +219,7 @@ function Player({
         <SearchBar
           skipSelected={skipSelected}
           guessSubmitted={guessSubmitted}
-          correctSelected={() => updateGuess(true)}
+          correctSelected={() => updateCorrectGuess(true)}
           guessNumber={guessNum}
           todaysSong={todaysSong}
         />

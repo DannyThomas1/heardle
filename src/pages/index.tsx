@@ -13,12 +13,7 @@ import Info from "~/components/Info";
 import Player from "~/components/Player";
 import { useEffect, useState } from "react";
 import SongCard from "~/components/SongCard";
-
-interface UserStats {
-  date: Date;
-  guessList: { song: string; status: string }[];
-  hasFinished: boolean;
-}
+import { type UserStats } from "./types/types";
 
 const Home: NextPage = () => {
   const { isSignedIn } = useUser();
@@ -27,14 +22,29 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const stats = localStorage.getItem("userStats");
-    if (!stats) return;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const userJSON = JSON.parse(stats);
-    const userStats = userJSON as UserStats;
-    if (userStats?.guessList?.length)
-      updateGuessNum(userStats?.guessList?.length);
-    if (userStats?.hasFinished) setCorrectGuess(userStats?.hasFinished);
+    if (!stats) {
+      const statsObj = {
+        guessList: [],
+        hasFinished: false,
+      };
+      localStorage.setItem("userStats", JSON.stringify(statsObj));
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const userStats = JSON.parse(stats) as UserStats;
+      if (userStats?.guessList?.length)
+        updateGuessNum(userStats?.guessList?.length);
+      if (userStats?.hasFinished) setCorrectGuess(userStats?.hasFinished);
+    }
   }, []);
+
+  const correctGuessChosen = (value: boolean) => {
+    setCorrectGuess(value);
+    const stats = localStorage.getItem("userStats");
+    if (!stats) return;
+    const userStats = JSON.parse(stats) as UserStats;
+    userStats.hasFinished = value;
+    localStorage.setItem("userStats", JSON.stringify(userStats));
+  };
 
   return (
     <main className="relative flex h-full min-h-full w-full flex-col items-center bg-black">
@@ -84,9 +94,9 @@ const Home: NextPage = () => {
             <div className="relative flex w-full flex-grow flex-col ">
               <GuessList />
             </div>
-            <footer className="mx-auto w-full max-w-screen-sm flex-col ">
+            <footer className="mx-auto w-full  flex-col ">
               <Player
-                updateGuess={setCorrectGuess}
+                updateCorrectGuess={correctGuessChosen}
                 updateGuessNum={updateGuessNum}
               />
             </footer>

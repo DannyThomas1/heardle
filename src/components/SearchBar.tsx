@@ -56,9 +56,8 @@ const SearchBar = ({
 
   const skipClicked = () => {
     guessContext?.addGuess({ song: "Skipped", status: "skipped" });
-    skipSelected()
-
-  }
+    skipSelected();
+  };
 
   return (
     <div className="flex w-full flex-col gap-5">
@@ -87,7 +86,7 @@ const SearchBar = ({
             ))}
         </div>
         <input
-          placeholder="Type some emojis!"
+          placeholder="Search for the artist/title!"
           className=" block w-full flex-grow truncate rounded-md border-2 border-gray-600 bg-black/20 p-3 py-2 pl-9 pr-3 outline-none focus:border-2 focus:border-green-500"
           value={input}
           onChange={handleChange}
