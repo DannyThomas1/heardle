@@ -77,12 +77,12 @@ const Home: NextPage = () => {
           </div>
         </header>
 
-        <div className="relative flex w-full flex-grow flex-col items-center justify-center p-4 lg:w-1/3 ">
+        <div className="relative flex w-full flex-grow flex-col items-center justify-between p-4 lg:w-1/3 ">
           {guessNum >= 7 || correctGuess ? (
             <SongCard guessNum={guessNum} />
           ) : (
             <>
-              <div className="w-full flex-grow overflow-y-auto py-3">
+              <div className="w-full overflow-y-auto py-3">
                 <GuessList />
               </div>
               <footer className="absolute bottom-0 right-0 flex w-full p-4 ">
