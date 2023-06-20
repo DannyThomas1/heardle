@@ -16,6 +16,8 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   useEffect(() => {
     window.addEventListener("resize", documentHeight);
     documentHeight();
+
+    return () => window.removeEventListener("resize", documentHeight);
   }, []);
 
   return (

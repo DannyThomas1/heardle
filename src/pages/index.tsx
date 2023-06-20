@@ -32,7 +32,7 @@ const Home: NextPage = () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const userStats = JSON.parse(stats) as UserStats;
       if (userStats?.guessList?.length)
-        updateGuessNum(userStats?.guessList?.length);
+        updateGuessNum(userStats?.guessList?.length + 1);
       if (userStats?.hasFinished) setCorrectGuess(userStats?.hasFinished);
     }
   }, []);
