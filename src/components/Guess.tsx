@@ -94,7 +94,7 @@ export const Guess = ({
 
   return (
     <div className="flex w-screen items-center justify-center border-y-2 border-gray-800">
-      <div className="flex w-full items-center justify-center px-3 lg:w-1/3">
+      <div className="flex w-full items-center justify-center px-3 lg:w-2/5">
         <div className="relative flex w-full flex-col gap-4">
           <div
             className="absolute left-[2px] top-[2px]  flex h-[12px] items-center justify-start bg-gray-800 "

@@ -6,10 +6,20 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import SongProvider from "~/context/context";
 import GuessProvider from "~/context/guess";
+import { useEffect } from "react";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
+  const documentHeight = () => {
+    const doc = document.documentElement;
+    doc.style.setProperty("--doc-height", `${window.innerHeight}px`);
+  };
+  useEffect(() => {
+    window.addEventListener("resize", documentHeight);
+    documentHeight();
+  }, []);
+
   return (
-    <>
+    <div id="app">
       <ClerkProvider
         {...pageProps}
         appearance={{
@@ -30,7 +40,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           </GuessProvider>
         </SongProvider>
       </ClerkProvider>
-    </>
+    </div>
   );
 };
 

@@ -2,13 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --doc-height: 100%;
+}
 
-html,body {
-    box-sizing: border-box;
+html,
+body, #app {
+    padding: 0;
+    margin: 0;
     height: 100vh;
+    /* fallback for Js load */
+    height: var(--doc-height);
+}
+
+html{
+    box-sizing: border-box;
     width: 100vw;
     @apply font-sans;
+    overflow-behaviour: none;
+    background-color: black;
 }
+
 
 
 body{
