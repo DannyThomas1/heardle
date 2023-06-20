@@ -34,7 +34,7 @@ function SongCard({ guessNum }: { guessNum: number }) {
   }, [todaysSong]);
 
   return (
-    <div className="my-20 flex h-full w-full flex-col items-center justify-start gap-4">
+    <div className="my-5 flex h-full w-full flex-col items-center justify-start gap-4">
       {guessNum === 7 ? (
         <h2 className="text-xl font-bold tracking-wide">
           Aw no, better luck next time!
