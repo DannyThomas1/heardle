@@ -67,7 +67,7 @@ const Home: NextPage = () => {
             </SignedIn>
             <SignedOut>
               <SignInButton mode="modal">
-                <button className="rounded-md border-2 border-green-600 p-2 text-white hover:bg-green-500 lg:p-1">
+                <button className="rounded-md border-2 border-transparent  p-2 text-white hover:text-green-500 lg:p-1">
                   Sign In
                 </button>
               </SignInButton>
