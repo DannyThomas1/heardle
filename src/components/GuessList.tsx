@@ -20,11 +20,11 @@ export const GuessList = () => {
   }, [guessCtx]);
 
   return (
-    <div className="flex w-full flex-col gap-5 ">
+    <div className="flex w-full flex-col gap-5">
       {guessArr.map((guess: { song: string; status: string }, i) => (
         <div
           key={i}
-          className=" flex h-[40px] w-full items-center justify-start gap-2 rounded-sm border-2 border-gray-800 p-1"
+          className=" flex h-[30px] w-full items-center justify-start gap-2 rounded-sm border-2 border-gray-800 p-1 md:h-[40px]"
         >
           {guess?.status !== "" && (
             <Image
@@ -32,15 +32,13 @@ export const GuessList = () => {
               alt="wrong"
               width={20}
               height={20}
-              className={`${
-                guess?.status === "partial" ? "text-yellow-400" : "text-white"
-              }`}
+              className={`${guess?.status === "partial" ? "text-yellow-400" : "text-white"
+                }`}
             />
           )}
           <p
-            className={`${
-              guess?.status === "partial" ? "text-yellow-400" : "text-white"
-            } overflow-hidden truncate`}
+            className={`${guess?.status === "partial" ? "text-yellow-400" : "text-white"
+              } overflow-hidden truncate`}
           >
             {guess?.song}
           </p>

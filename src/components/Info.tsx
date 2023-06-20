@@ -1,8 +1,16 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "./Modal";
+
+
 function Info() {
   const [modalIsOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const history = localStorage.getItem("firstTime")
+    if (history) setIsOpen(false)
+    else setIsOpen(true)
+  }, [])
 
   function openModal() {
     setIsOpen(true);
@@ -10,6 +18,7 @@ function Info() {
 
   function closeModal() {
     setIsOpen(false);
+    localStorage.setItem("firstTime", "false")
   }
 
   return (

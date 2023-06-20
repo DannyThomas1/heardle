@@ -94,10 +94,10 @@ export const Guess = ({
 
   return (
     <div className="flex w-screen items-center justify-center border-y-2 border-gray-800">
-      <div className="flex w-full items-center justify-center px-3 md:w-1/3">
+      <div className="flex w-full items-center justify-center px-3 lg:w-1/3">
         <div className="relative flex w-full flex-col gap-4">
           <div
-            className="absolute left-[2px] top-[2px] z-10 flex h-[12px] items-center justify-start bg-gray-800 "
+            className="absolute left-[2px] top-[2px]  flex h-[12px] items-center justify-start bg-gray-800 "
             style={{ width: `${playWidth}%` }}
           >
             <span
@@ -109,27 +109,27 @@ export const Guess = ({
 
           <div className="relative flex h-[16px] w-full items-center justify-between border-2 border-gray-700 ">
             <span
-              className={`absolute z-20  h-[11px] border-r `}
+              className={`absolute h-[11px] border-r `}
               style={{ width: `${(FIRST_CLIP / SIXTH_CLIP) * 100}%` }}
             ></span>
             <span
-              className={`absolute z-20  h-[11px] border-r `}
+              className={`absolute h-[11px] border-r `}
               style={{ width: `${(SECOND_CLIP / SIXTH_CLIP) * 100}%` }}
             ></span>
             <span
-              className={`absolute z-20  h-[11px] border-r `}
+              className={`absolute h-[11px] border-r `}
               style={{ width: `${(THIRD_CLIP / SIXTH_CLIP) * 100}%` }}
             ></span>
             <span
-              className={`absolute z-20  h-[11px] border-r `}
+              className={`absolute h-[11px] border-r `}
               style={{ width: `${(FOURTH_CLIP / SIXTH_CLIP) * 100}%` }}
             ></span>
             <span
-              className={`absolute z-20  h-[11px] border-r `}
+              className={`absolute h-[11px] border-r `}
               style={{ width: `${(FIFTH_CLIP / SIXTH_CLIP) * 100}%` }}
             ></span>
             <span
-              className={`absolute z-20  h-[11px] border-r `}
+              className={`absolute h-[11px] border-r `}
               style={{ width: `${(SIXTH_CLIP / SIXTH_CLIP) * 100}%` }}
             ></span>
           </div>

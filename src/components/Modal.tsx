@@ -28,7 +28,6 @@ export const Modal = ({
     overlay: {
       "background-color": "black",
       opacity: "100%",
-      "z-index": 1000,
     },
   };
 
