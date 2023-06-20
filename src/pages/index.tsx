@@ -16,7 +16,7 @@ import SongCard from "~/components/SongCard";
 
 interface UserStats {
   date: Date;
-  guessList: { song: string, status: string }[];
+  guessList: { song: string; status: string }[];
   hasFinished: boolean;
 }
 
@@ -29,20 +29,19 @@ const Home: NextPage = () => {
     const stats = localStorage.getItem("userStats");
     if (!stats) return;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const userJSON = JSON.parse(stats)
-    const userStats = userJSON as UserStats
-    if (userStats?.guessList?.length) updateGuessNum(userStats?.guessList?.length)
-    if (userStats?.hasFinished) setCorrectGuess(userStats?.hasFinished)
-  }, [])
-
-
+    const userJSON = JSON.parse(stats);
+    const userStats = userJSON as UserStats;
+    if (userStats?.guessList?.length)
+      updateGuessNum(userStats?.guessList?.length);
+    if (userStats?.hasFinished) setCorrectGuess(userStats?.hasFinished);
+  }, []);
 
   return (
     <main className="flex min-h-screen w-screen justify-center">
       <div className="flex h-screen w-full flex-col items-center bg-black">
-        <header className="flex h-24 w-full items-center justify-center gap-4 border-b-2 border-green-600">
+        <header className="h-max-content flex w-full items-center justify-center gap-4 border-b-2 border-green-600 py-1">
           <div className="flex w-full items-center px-3 py-2 lg:w-1/3">
-            <div className="flex gap-3 w-1/4">
+            <div className="flex w-1/4 gap-3">
               <Info />
               {isSignedIn && (
                 <Image
@@ -53,12 +52,12 @@ const Home: NextPage = () => {
                 />
               )}
             </div>
-            <div className="flex-grow justify-center items-center flex w-1/2">
+            <div className="flex w-1/2 flex-grow items-center justify-center">
               <h1 className="font-sans text-2xl tracking-wider text-white lg:text-5xl">
                 Heardle
               </h1>
             </div>
-            <div className="flex items-center justify-end w-1/4">
+            <div className="flex w-1/4 items-center justify-end">
               <SignedIn>
                 <UserButton
                   afterSignOutUrl="/"
@@ -78,7 +77,7 @@ const Home: NextPage = () => {
           </div>
         </header>
 
-        <div className="flex flex-grow w-full flex-col items-center justify-center p-4 lg:w-1/3 ">
+        <div className="relative flex w-full flex-grow flex-col items-center justify-center p-4 lg:w-1/3 ">
           {guessNum >= 7 || correctGuess ? (
             <SongCard guessNum={guessNum} />
           ) : (
@@ -86,7 +85,7 @@ const Home: NextPage = () => {
               <div className="w-full flex-grow overflow-y-auto py-3">
                 <GuessList />
               </div>
-              <footer className="flex w-full">
+              <footer className="absolute bottom-0 right-0 flex w-full p-4 ">
                 <Player
                   updateGuess={setCorrectGuess}
                   updateGuessNum={updateGuessNum}
