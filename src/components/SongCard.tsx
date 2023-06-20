@@ -42,7 +42,7 @@ function SongCard({ guessNum }: { guessNum: number }) {
       ) : (
         <div>
           <h2 className="text-2xl font-bold tracking-wide">
-            You got it in {guessNum} guesses!
+            You got it in {guessNum > 1 ? `${guessNum} guesses!` : "1 guess!"}
           </h2>
           <div className="text-center text-slate-200">
             {guessNum === 1 && <p>Wow, you're a genius!</p>}
