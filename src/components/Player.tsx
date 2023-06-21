@@ -97,6 +97,7 @@ function Player({
       return;
     }
 
+    setIsPlaying(true);
     let counterID = setInterval(() => setCounter((prev) => prev + 1), 1000);
     setCounterID(String(counterID));
     if (guessToSeconds[guessNumber]) {
@@ -124,8 +125,7 @@ function Player({
     if (!player) return;
 
     player.play();
-    setIsPlaying(true);
-    player.bind((window as any)?.SC.Widget.Events.PLAY, playSong(guessNumber));
+    player.bind((window as any)?.SC.Widget.Events.PLAY, playSong(guessNum));
   };
 
   const pauseSelected = (counterID: string, timerID: string) => {
