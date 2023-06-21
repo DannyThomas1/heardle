@@ -5,7 +5,7 @@ export default authMiddleware({
     "/",
     "/api/cron",
     "/api/trpc/songs.todaysSong",
-    "api/trpc/songs.getAll",
+    "/api/trpc/songs.getAll",
   ],
 });
 
