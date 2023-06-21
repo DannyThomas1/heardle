@@ -4,7 +4,6 @@ import "~/styles/globals.css";
 import Head from "next/head";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
-import SongProvider from "~/context/context";
 import GuessProvider from "~/context/guess";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
@@ -29,22 +28,20 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           baseTheme: dark,
         }}
       >
-        <SongProvider>
-          <GuessProvider>
-            <Head>
-              <title>Heardle</title>
-              <meta
-                name="description"
-                content="Guess popular songs by 1 second clips"
-              />
-              <link rel="icon" href="/logo.svg" />
-            </Head>
-            <div>
-              <Toaster />
-            </div>
-            <Component {...pageProps} />
-          </GuessProvider>
-        </SongProvider>
+        <GuessProvider>
+          <Head>
+            <title>Heardle</title>
+            <meta
+              name="description"
+              content="Guess popular songs by 1 second clips"
+            />
+            <link rel="icon" href="/logo.svg" />
+          </Head>
+          <div>
+            <Toaster />
+          </div>
+          <Component {...pageProps} />
+        </GuessProvider>
       </ClerkProvider>
     </div>
   );

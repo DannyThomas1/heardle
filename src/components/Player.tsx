@@ -13,8 +13,7 @@ import {
   SIXTH_CLIP,
   THIRD_CLIP,
 } from "~/constants";
-import { RouterInputs, RouterOutputs, api } from "~/utils/api";
-import { SongContext } from "~/context/context";
+import { RouterOutputs } from "~/utils/api";
 import { UserStats } from "~/pages/types/types";
 
 interface Player {
@@ -27,6 +26,7 @@ interface Player {
   unbind: (x: string) => void;
   getCurrentSound: (x: (x: any) => void) => void;
   load: (x: string) => void;
+  setVolume: (x: number) => void;
 }
 
 type Song = RouterOutputs["songs"]["todaysSong"];
@@ -47,7 +47,6 @@ function Player({
   const [counter, setCounter] = useState(0);
   const [counterID, setCounterID] = useState("");
   const [timerID, setTimerID] = useState("");
-  const songContext = useContext(SongContext);
 
   useEffect(() => {
     const stats = localStorage.getItem("userStats");
@@ -62,25 +61,12 @@ function Player({
     setLoading(true);
     const widgetIFrame = document.getElementById("sc-widget");
     const widget = (window as any)?.SC?.Widget(widgetIFrame);
-    widget.bind((window as any)?.SC.Widget.Events.READY, () => {
+    widget.bind((window as any)?.SC.Widget.Events.READY, async () => {
       setLoading(false);
     });
 
     setPlayer(widget);
   }, []);
-
-  useEffect(() => {
-    if (!player || !todaysSong) return;
-    player.load(todaysSong?.url);
-
-    player.bind((window as any)?.SC.Widget.Events.READY, () => {
-      player.getCurrentSound((currentSound: any) => {
-        if (currentSound) {
-          songContext?.setCurrentSong(currentSound);
-        }
-      });
-    });
-  }, [todaysSong]);
 
   const guessToSeconds: { [key: number]: number } = {
     1: FIRST_CLIP,
