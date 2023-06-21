@@ -125,7 +125,7 @@ function Player({
     if (!player) return;
 
     player.play();
-    player.bind((window as any)?.SC.Widget.Events.PLAY, playSong(guessNum));
+    player.bind((window as any)?.SC.Widget.Events.PLAY, playSong(guessNumber));
   };
 
   const pauseSelected = (counterID: string, timerID: string) => {
