@@ -16,6 +16,7 @@ import { type UserStats } from "./types/types";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import Scores from "~/components/Scores";
+import { LoadingPage } from "~/components/Loading";
 
 function initLocalStorage() {
   const statsObj = {
@@ -32,7 +33,8 @@ const Home: NextPage = () => {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [guessNum, updateGuessNum] = useState(1);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const todaysSong = api.songs.todaysSong.useQuery(undefined).data!;
+  const { data: todaysSong, isLoading } =
+    api.songs.todaysSong.useQuery(undefined);
 
   useEffect(() => {
     const stats = localStorage.getItem("userStats");
@@ -70,6 +72,7 @@ const Home: NextPage = () => {
     localStorage.setItem("userStats", JSON.stringify(userStats));
 
     if (!userStats?.scoreLogged && isSignedIn) {
+      if (!todaysSong?.id) return;
       mutate({
         score: guessNum,
         songId: todaysSong?.id,
@@ -83,6 +86,7 @@ const Home: NextPage = () => {
     if (!stats) return;
     const userStats = JSON.parse(stats) as UserStats;
     if (guessNum >= 7 && isSignedIn && !userStats?.scoreLogged) {
+      if (!todaysSong?.id) return;
       mutate({
         score: guessNum,
         songId: todaysSong?.id,
@@ -124,24 +128,32 @@ const Home: NextPage = () => {
         </div>
       </header>
 
-      <div className="flex w-full flex-grow flex-col items-center justify-between p-4 lg:w-2/5">
-        {guessNum >= 7 || correctGuess ? (
-          <SongCard guessNum={guessNum} />
-        ) : (
-          <>
-            <div className="relative flex w-full flex-grow flex-col ">
-              <GuessList />
-            </div>
-            <footer className="mx-auto w-full  flex-col ">
-              <Player
-                updateCorrectGuess={correctGuessChosen}
-                updateGuessNum={updateGuessNum}
-                todaysSong={todaysSong}
-              />
-            </footer>
-          </>
-        )}
-      </div>
+      {isLoading ? (
+        <LoadingPage />
+      ) : !todaysSong ? (
+        <div className="flex h-full items-center justify-center">
+          <h1>Theres been a problem, please try again!</h1>
+        </div>
+      ) : (
+        <div className="flex w-full flex-grow flex-col items-center justify-between p-4 lg:w-2/5">
+          {guessNum >= 7 || correctGuess ? (
+            <SongCard guessNum={guessNum} />
+          ) : (
+            <>
+              <div className="relative flex w-full flex-grow flex-col ">
+                <GuessList />
+              </div>
+              <footer className="mx-auto w-full  flex-col ">
+                <Player
+                  updateCorrectGuess={correctGuessChosen}
+                  updateGuessNum={updateGuessNum}
+                  todaysSong={todaysSong}
+                />
+              </footer>
+            </>
+          )}
+        </div>
+      )}
     </main>
   );
 };

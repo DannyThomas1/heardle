@@ -186,7 +186,7 @@ function Player({
     <div className="flex w-full flex-col items-center justify-center">
       <iframe
         id="sc-widget"
-        src={`https://w.soundcloud.com/player/?url=https://soundcloud.com/edsheeran/ed-sheeran-bad-habits`}
+        src={`https://w.soundcloud.com/player/?url=${todaysSong?.url}`}
         width={0}
         height={0}
         allow="autoplay"
