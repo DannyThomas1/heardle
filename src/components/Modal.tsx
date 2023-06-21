@@ -21,13 +21,14 @@ export const Modal = ({
       bottom: "auto",
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
-      "background-color": "#1e293b",
-      "border-radius": "12px",
-      "border-color": "#1e293b",
+      backgroundColor: "#020617",
+      borderRadius: "12px",
+      borderColor: "#1e293b",
+      minWidth: "25%",
     },
     overlay: {
-      "background-color": "black",
-      opacity: "100%",
+      backgroundColor: "rgba(0,0,0,.5)",
+      zIndex: 1000,
     },
   };
 

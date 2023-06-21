@@ -13,7 +13,7 @@ import {
   SIXTH_CLIP,
   THIRD_CLIP,
 } from "~/constants";
-import { api } from "~/utils/api";
+import { RouterInputs, RouterOutputs, api } from "~/utils/api";
 import { SongContext } from "~/context/context";
 import { UserStats } from "~/pages/types/types";
 
@@ -29,12 +29,16 @@ interface Player {
   load: (x: string) => void;
 }
 
+type Song = RouterOutputs["songs"]["todaysSong"];
+
 function Player({
   updateCorrectGuess,
   updateGuessNum,
+  todaysSong,
 }: {
   updateCorrectGuess: (x: boolean) => void;
   updateGuessNum: (x: number) => void;
+  todaysSong: Song;
 }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState<Player>();
@@ -45,15 +49,13 @@ function Player({
   const [timerID, setTimerID] = useState("");
   const songContext = useContext(SongContext);
 
-  const todaysSong = api.songs.todaysSong.useQuery().data;
-
   useEffect(() => {
     const stats = localStorage.getItem("userStats");
     if (!stats) return;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const userStats = JSON.parse(stats) as UserStats;
-    console.log(userStats?.guessList?.length);
-    if (userStats?.guessList?.length) setGuessNum(userStats?.guessList?.length);
+    if (userStats?.guessList?.length)
+      setGuessNum(userStats?.guessList?.length + 1);
   }, []);
 
   useEffect(() => {
@@ -69,13 +71,11 @@ function Player({
 
   useEffect(() => {
     if (!player || !todaysSong) return;
-
     player.load(todaysSong?.url);
 
     player.bind((window as any)?.SC.Widget.Events.READY, () => {
       player.getCurrentSound((currentSound: any) => {
         if (currentSound) {
-          console.log(currentSound);
           songContext?.setCurrentSong(currentSound);
         }
       });
@@ -123,8 +123,8 @@ function Player({
   const playSelected = (guessNumber: number) => {
     if (!player) return;
 
-    setIsPlaying(true);
     player.play();
+    setIsPlaying(true);
     player.bind((window as any)?.SC.Widget.Events.PLAY, playSong(guessNumber));
   };
 
@@ -190,6 +190,7 @@ function Player({
         width={0}
         height={0}
         allow="autoplay"
+        onLoad={() => setLoading(false)}
       ></iframe>
 
       <Guess guessNum={guessNum} isPlaying={isPlaying} counter={counter} />

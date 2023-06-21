@@ -7,6 +7,7 @@ import { dark } from "@clerk/themes";
 import SongProvider from "~/context/context";
 import GuessProvider from "~/context/guess";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const documentHeight = () => {
@@ -38,6 +39,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
               />
               <link rel="icon" href="/logo.svg" />
             </Head>
+            <div>
+              <Toaster />
+            </div>
             <Component {...pageProps} />
           </GuessProvider>
         </SongProvider>

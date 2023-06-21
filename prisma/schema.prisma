@@ -10,24 +10,30 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-}
-
 model Genre {
   id   Int    @id @default(autoincrement())
   name String
 }
 
 model Songs {
-  id        Int       @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   name      String
   artist    String
   genre     String
   url       String
   title     String
-  status    Boolean   @default(false)
+  status    Boolean     @default(false)
   date_done DateTime?
+  UserStats UserStats[]
+}
+
+model UserStats {
+  id          Int     @id @default(autoincrement())
+  user_id     String
+  song_id     Int
+  Song        Songs   @relation(fields: [song_id], references: [id])
+  num_guesses Int
+  success     Boolean @default(false)
+
+  @@unique([user_id, song_id])
 }

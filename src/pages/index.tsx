@@ -8,18 +8,21 @@ import {
 import { type NextPage } from "next";
 import { GuessList } from "~/components/GuessList";
 import { dark } from "@clerk/themes";
-import Image from "next/image";
 import Info from "~/components/Info";
 import Player from "~/components/Player";
 import { useEffect, useState } from "react";
 import SongCard from "~/components/SongCard";
 import { type UserStats } from "./types/types";
+import { api } from "~/utils/api";
+import { toast } from "react-hot-toast";
+import Scores from "~/components/Scores";
 
 function initLocalStorage() {
   const statsObj = {
     guessList: [],
     hasFinished: false,
     date: new Date()?.toLocaleDateString(),
+    scoreLogged: false,
   };
   localStorage.setItem("userStats", JSON.stringify(statsObj));
 }
@@ -28,6 +31,10 @@ const Home: NextPage = () => {
   const { isSignedIn } = useUser();
   const [correctGuess, setCorrectGuess] = useState(false);
   const [guessNum, updateGuessNum] = useState(1);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const todaysSong = api.songs.todaysSong.useQuery(undefined, {
+    enabled: false,
+  }).data!;
 
   useEffect(() => {
     const stats = localStorage.getItem("userStats");
@@ -46,6 +53,16 @@ const Home: NextPage = () => {
     }
   }, []);
 
+  const { mutate } = api.songs.submitScore.useMutation({
+    onSuccess: () => {
+      toast.success("Score saved!");
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const stats = JSON.parse(localStorage.getItem("userStats")!) as UserStats;
+      stats.scoreLogged = true;
+      localStorage.setItem("userStats", JSON.stringify(stats));
+    },
+  });
+
   const correctGuessChosen = (value: boolean) => {
     setCorrectGuess(value);
     const stats = localStorage.getItem("userStats");
@@ -53,7 +70,28 @@ const Home: NextPage = () => {
     const userStats = JSON.parse(stats) as UserStats;
     userStats.hasFinished = value;
     localStorage.setItem("userStats", JSON.stringify(userStats));
+
+    if (!userStats?.scoreLogged && isSignedIn) {
+      mutate({
+        score: guessNum,
+        songId: todaysSong?.id,
+        success: value,
+      });
+    }
   };
+
+  useEffect(() => {
+    const stats = localStorage.getItem("userStats");
+    if (!stats) return;
+    const userStats = JSON.parse(stats) as UserStats;
+    if (guessNum >= 7 && isSignedIn && !userStats?.scoreLogged) {
+      mutate({
+        score: guessNum,
+        songId: todaysSong?.id,
+        success: false,
+      });
+    }
+  }, [guessNum]);
 
   return (
     <main className="relative flex h-full min-h-full w-full flex-col items-center bg-black">
@@ -61,14 +99,7 @@ const Home: NextPage = () => {
         <div className="lg:w- flex w-full items-center px-3 lg:w-2/5">
           <div className="flex w-1/4 gap-3">
             <Info />
-            {isSignedIn && (
-              <Image
-                src={"/assets/analytics.svg"}
-                alt="stats"
-                width={30}
-                height={30}
-              />
-            )}
+            {isSignedIn && <Scores />}
           </div>
           <div className="flex w-1/2 flex-grow items-center justify-center">
             <h1 className="font-sans text-3xl font-semibold tracking-wider text-white lg:text-5xl">
@@ -107,6 +138,7 @@ const Home: NextPage = () => {
               <Player
                 updateCorrectGuess={correctGuessChosen}
                 updateGuessNum={updateGuessNum}
+                todaysSong={todaysSong}
               />
             </footer>
           </>

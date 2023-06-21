@@ -1,14 +1,32 @@
 /* eslint-disable */
 import Image from "next/image";
-import React, { useContext, useEffect, useState } from "react";
-import { LoadingPage, LoadingSpinner } from "./Loading";
+import React, { useEffect, useState } from "react";
+import { LoadingSpinner } from "./Loading";
 import { api } from "~/utils/api";
+import { useUser } from "@clerk/nextjs";
+import { UserStats } from "~/pages/types/types";
+import { toast } from "react-hot-toast";
 
 function SongCard({ guessNum }: { guessNum: number }) {
-  const todaysSong = api.songs.todaysSong.useQuery(undefined, {
-    enabled: false,
-    staleTime: Infinity,
-  }).data;
+  const { data: todaysSong } = api.songs.todaysSong.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+
+  const { mutate } = api.songs.submitScore.useMutation({
+    onSuccess: () => {
+      toast.success("Score saved!");
+      const stats = JSON.parse(localStorage.getItem("userStats")!);
+      stats.scoreLogged = true;
+      localStorage.setItem("userStats", JSON.stringify(stats));
+      setLoggedScore(true);
+    },
+    onError: (err) => {
+      console.log(err);
+      toast.error("Error saving score, please try again later");
+    },
+  });
+  const { isSignedIn } = useUser();
+  const [loggedScore, setLoggedScore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [songArtwork, setSongArtwork] = useState("");
 
@@ -32,6 +50,22 @@ function SongCard({ guessNum }: { guessNum: number }) {
       console.log(err);
     }
   }, [todaysSong]);
+
+  useEffect(() => {
+    const stats = localStorage.getItem("userStats");
+    if (!stats) return;
+    const userStats = JSON.parse(stats) as UserStats;
+    if (userStats?.scoreLogged) setLoggedScore(true);
+  }, []);
+
+  const saveScore = () => {
+    if (!todaysSong) return;
+    mutate({
+      score: guessNum,
+      songId: todaysSong?.id,
+      success: guessNum > 6 ? false : true,
+    });
+  };
 
   return (
     <div className="my-5 flex h-full w-full flex-col items-center justify-start gap-4">
@@ -123,6 +157,25 @@ function SongCard({ guessNum }: { guessNum: number }) {
               : "bg-gray-800"
           }`}
         ></span>
+      </div>
+
+      <div>
+        {!isSignedIn && (
+          <div>
+            <p className="mt-3 font-bold">Sign in to save your scores!</p>
+          </div>
+        )}
+
+        {isSignedIn && !loggedScore && (
+          <div>
+            <button
+              className="border-1 w-32 rounded-md bg-green-500 p-1"
+              onClick={saveScore}
+            >
+              Save Score!
+            </button>
+          </div>
+        )}
       </div>
       <div className="my-5">
         <iframe

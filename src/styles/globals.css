@@ -32,6 +32,8 @@ body{
 
 
 
+
+
 .playing {
     @apply rounded-full bg-black border-2 border-white w-[50px] p-3 h-[50px] flex justify-between items-end;
 }
