@@ -32,9 +32,7 @@ const Home: NextPage = () => {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [guessNum, updateGuessNum] = useState(1);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const todaysSong = api.songs.todaysSong.useQuery(undefined, {
-    enabled: false,
-  }).data!;
+  const todaysSong = api.songs.todaysSong.useQuery(undefined).data!;
 
   useEffect(() => {
     const stats = localStorage.getItem("userStats");
