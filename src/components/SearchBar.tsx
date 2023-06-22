@@ -110,7 +110,7 @@ const SearchBar = ({
         <button
           className={`text-md rounded-md ${
             isPlaying
-              ? "cursor-not-allowed bg-gray-400"
+              ? "cursor-not-allowed bg-slate-800/90"
               : "hover:bg-slate-600` bg-slate-700"
           }  p-2 tracking-wider text-white`}
           onClick={skipClicked}
@@ -121,7 +121,7 @@ const SearchBar = ({
         <button
           className={`text-md rounded-md ${
             isPlaying
-              ? "cursor-not-allowed bg-gray-400"
+              ? "cursor-not-allowed bg-green-800/80"
               : "bg-green-600 hover:bg-green-500"
           } p-2 tracking-wider text-white `}
           onClick={submitClicked}
