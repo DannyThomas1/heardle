@@ -22,7 +22,7 @@ ChartJS.register(
   Legend
 );
 
-const labels = ["1", "2", "2", "4", "5", "6", "x"];
+const labels = ["1", "2", "3", "4", "5", "6", "x"];
 
 const options = {
   indexAxis: "y" as const,
@@ -94,7 +94,6 @@ function Scores() {
   const [graphData, setGraphData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const stats = api.songs.getScores.useQuery(undefined, {
-    refetchOnWindowFocus: false,
     onError: (err) => {
       console.log(err);
       setError(true);

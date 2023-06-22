@@ -37,6 +37,7 @@ export const Modal = ({
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       style={customStyles}
+      ariaHideApp={false}
     >
       <div className="flex justify-between gap-4">
         <h1 className="text-xl font-bold tracking-wide">{modalHeader}</h1>

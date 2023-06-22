@@ -27,9 +27,8 @@ export const songRouter = createTRPCRouter({
       })
     )
     .query(({ ctx, input }) => {
-      console.log(input.search);
       return ctx.prisma.songs.findMany({
-        take: 5,
+        take: 10,
         where: {
           name: {
             contains: input.search,

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { AudioPlaying } from "./AudioPlaying";
 import { LoadingSpinner } from "./Loading";
@@ -63,6 +63,7 @@ function Player({
     const widget = (window as any)?.SC?.Widget(widgetIFrame);
     widget.bind((window as any)?.SC.Widget.Events.READY, async () => {
       setLoading(false);
+      widget.setVolume(100);
     });
 
     setPlayer(widget);
