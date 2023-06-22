@@ -210,6 +210,7 @@ function Player({
           correctSelected={() => updateCorrectGuess(true)}
           guessNumber={guessNum}
           todaysSong={todaysSong}
+          isPlaying={isPlaying}
         />
       </div>
     </div>

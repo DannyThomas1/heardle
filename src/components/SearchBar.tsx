@@ -12,12 +12,14 @@ const SearchBar = ({
   guessSubmitted,
   guessNumber,
   todaysSong,
+  isPlaying,
 }: {
   skipSelected: () => void;
   correctSelected: (x: boolean) => void;
   guessSubmitted: () => void;
   guessNumber: number;
   todaysSong: Song | undefined;
+  isPlaying: boolean;
 }) => {
   const guessContext = useContext(GuessContext);
   const [input, setInput] = useState("");
@@ -106,14 +108,24 @@ const SearchBar = ({
 
       <div className="my-3 flex w-full items-center justify-between">
         <button
-          className="text-md rounded-md bg-slate-700 p-2 tracking-wider text-white hover:bg-slate-600"
+          className={`text-md rounded-md ${
+            isPlaying
+              ? "cursor-not-allowed bg-gray-400"
+              : "hover:bg-slate-600` bg-slate-700"
+          }  p-2 tracking-wider text-white`}
           onClick={skipClicked}
+          disabled={isPlaying}
         >
           Skip (+{guessNumber}s)
         </button>
         <button
-          className="text-md rounded-md bg-green-600 p-2 tracking-wider text-white hover:bg-green-500"
+          className={`text-md rounded-md ${
+            isPlaying
+              ? "cursor-not-allowed bg-gray-400"
+              : "bg-green-600 hover:bg-green-500"
+          } p-2 tracking-wider text-white `}
           onClick={submitClicked}
+          disabled={isPlaying}
         >
           Submit
         </button>
