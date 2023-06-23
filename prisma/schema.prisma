@@ -31,7 +31,7 @@ model UserStats {
   id          Int     @id @default(autoincrement())
   user_id     String
   song_id     Int
-  Song        Songs   @relation(fields: [song_id], references: [id])
+  Song        Songs   @relation(fields: [song_id], references: [id], onDelete: Cascade)
   num_guesses Int
   success     Boolean @default(false)
 
