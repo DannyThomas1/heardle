@@ -108,7 +108,7 @@ const SearchBar = ({
 
       <div className="my-3 flex w-full items-center justify-between">
         <button
-          className="text-md rounded-md bg-slate-900 p-2 tracking-wider text-white hover:bg-slate-600"
+          className="text-md rounded-md bg-slate-900 p-2 tracking-wider text-white hover:bg-slate-800"
           onClick={skipClicked}
         >
           Skip (+{guessNumber}s)
