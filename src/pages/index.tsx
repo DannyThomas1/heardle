@@ -12,66 +12,65 @@ import Info from "~/components/Info";
 import Player from "~/components/Player";
 import { useEffect, useState } from "react";
 import SongCard from "~/components/SongCard";
-import { type UserStats } from "./types/types";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import Scores from "~/components/Scores";
 import { LoadingPage } from "~/components/Loading";
-
-function initLocalStorage() {
-  const statsObj = {
-    guessList: [],
-    hasFinished: false,
-    date: new Date()?.toLocaleDateString(),
-    scoreLogged: false,
-  };
-  localStorage.setItem("userStats", JSON.stringify(statsObj));
-}
+import useUserStatsStore from "~/stores/stats";
+import { shallow } from "zustand/shallow";
 
 const Home: NextPage = () => {
   const { isSignedIn } = useUser();
   const [correctGuess, setCorrectGuess] = useState(false);
   const [guessNum, updateGuessNum] = useState(1);
+  const {
+    date,
+    guessList,
+    scoreLogged,
+    hasFinished,
+    songID,
+    resetState,
+    updateHasFinished,
+    updateScoreLogged,
+  } = useUserStatsStore(
+    (state) => ({
+      date: state.date,
+      guessList: state.guessList,
+      scoreLogged: state.scoreLogged,
+      hasFinished: state.hasFinished,
+      songID: state.songID,
+      resetState: state.resetState,
+      updateHasFinished: state.updateHasFinished,
+      updateScoreLogged: state.updateScoreLogged,
+    }),
+    shallow
+  );
+
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { data: todaysSong, isLoading } =
     api.songs.todaysSong.useQuery(undefined);
 
   useEffect(() => {
-    const stats = localStorage.getItem("userStats");
-    if (!stats) {
-      initLocalStorage();
+    if (!todaysSong) return;
+    //Check if date/song has changed
+    if (date !== new Date().toLocaleDateString() && songID !== todaysSong.id) {
+      resetState(todaysSong?.id, new Date().toLocaleDateString());
     } else {
-      const todaysDate = new Date()?.toLocaleDateString();
-      const userStats = JSON.parse(stats) as UserStats;
-      if (userStats?.date === todaysDate) {
-        if (userStats?.guessList?.length)
-          updateGuessNum(userStats?.guessList?.length + 1);
-        if (userStats?.hasFinished) setCorrectGuess(userStats?.hasFinished);
-      } else {
-        initLocalStorage();
-      }
+      if (guessList?.length > 0) updateGuessNum(guessList.length + 1);
+      if (hasFinished) setCorrectGuess(hasFinished);
     }
-  }, []);
+  }, [todaysSong]);
 
   const { mutate } = api.songs.submitScore.useMutation({
     onSuccess: () => {
       toast.success("Score saved!");
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const stats = JSON.parse(localStorage.getItem("userStats")!) as UserStats;
-      stats.scoreLogged = true;
-      localStorage.setItem("userStats", JSON.stringify(stats));
+      updateScoreLogged(true);
     },
   });
 
   const correctGuessChosen = (value: boolean) => {
-    setCorrectGuess(value);
-    const stats = localStorage.getItem("userStats");
-    if (!stats) return;
-    const userStats = JSON.parse(stats) as UserStats;
-    userStats.hasFinished = value;
-    localStorage.setItem("userStats", JSON.stringify(userStats));
-
-    if (!userStats?.scoreLogged && isSignedIn) {
+    updateHasFinished(value);
+    if (!scoreLogged && isSignedIn) {
       if (!todaysSong?.id) return;
       mutate({
         score: guessNum,
@@ -79,13 +78,11 @@ const Home: NextPage = () => {
         success: value,
       });
     }
+    setCorrectGuess(value);
   };
 
   useEffect(() => {
-    const stats = localStorage.getItem("userStats");
-    if (!stats) return;
-    const userStats = JSON.parse(stats) as UserStats;
-    if (guessNum >= 7 && isSignedIn && !userStats?.scoreLogged) {
+    if (guessNum >= 7 && isSignedIn && !scoreLogged) {
       if (!todaysSong?.id) return;
       mutate({
         score: guessNum,
@@ -137,7 +134,7 @@ const Home: NextPage = () => {
       ) : (
         <div className="flex w-full flex-grow flex-col items-center justify-between p-4 lg:w-2/5">
           {guessNum >= 7 || correctGuess ? (
-            <SongCard guessNum={guessNum} />
+            <SongCard guessNum={guessNum} todaysSong={todaysSong} />
           ) : (
             <>
               <div className="relative flex w-full flex-grow flex-col ">

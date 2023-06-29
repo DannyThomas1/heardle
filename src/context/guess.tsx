@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { type UserStats } from "~/pages/types/types";
+import useUserStatsStore from "~/stores/stats";
 
 interface GuessContextValue {
   guess: Guess[];
@@ -16,26 +16,18 @@ export const GuessContext = createContext<GuessContextValue | null>(null);
 
 function GuessProvider({ children }: { children: React.ReactNode }) {
   const [guess, setGuess] = useState<Guess[]>([]);
+  const [updateGuessList, guessList] = useUserStatsStore((state) => [
+    state.updateGuessList,
+    state.guessList,
+  ]);
 
   const addGuess = (guess: Guess) => {
     setGuess((prev) => [...prev, guess]);
-    const stats = localStorage.getItem("userStats");
-
-    if (stats) {
-      const statsJSON = JSON.parse(stats) as UserStats;
-      const newStats = {
-        ...statsJSON,
-        guessList: [...statsJSON.guessList, guess],
-      };
-      localStorage.setItem("userStats", JSON.stringify(newStats));
-    }
+    updateGuessList(guess);
   };
 
   useEffect(() => {
-    const stats = localStorage.getItem("userStats");
-    if (!stats) return;
-    const statsJSON = JSON.parse(stats) as UserStats;
-    if (statsJSON?.guessList?.length) setGuess(statsJSON?.guessList);
+    if (guessList?.length) setGuess(guessList);
   }, []);
 
   return (

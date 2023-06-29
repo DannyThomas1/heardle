@@ -14,7 +14,7 @@ import {
   THIRD_CLIP,
 } from "~/constants";
 import { RouterOutputs } from "~/utils/api";
-import { UserStats } from "~/pages/types/types";
+import useUserStatsStore from "~/stores/stats";
 
 interface Player {
   isPaused: (x: (b: boolean) => void) => void;
@@ -47,14 +47,10 @@ function Player({
   const [counter, setCounter] = useState(0);
   const [counterID, setCounterID] = useState("");
   const [timerID, setTimerID] = useState("");
+  const [guessList] = useUserStatsStore((state) => [state.guessList]);
 
   useEffect(() => {
-    const stats = localStorage.getItem("userStats");
-    if (!stats) return;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const userStats = JSON.parse(stats) as UserStats;
-    if (userStats?.guessList?.length)
-      setGuessNum(userStats?.guessList?.length + 1);
+    if (guessList?.length) setGuessNum(guessList?.length + 1);
   }, []);
 
   useEffect(() => {

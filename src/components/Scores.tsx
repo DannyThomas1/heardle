@@ -58,7 +58,7 @@ const options = {
         color: "#6b7280",
       },
       title: {
-        text: "Number of Guesses",
+        text: "# of Guesses",
         display: true,
         color: "#FFF",
         padding: 10,
@@ -78,7 +78,7 @@ const options = {
         display: false,
       },
       title: {
-        text: "Number of Songs",
+        text: "# of Songs",
         display: true,
         color: "#FFF",
         padding: 10,

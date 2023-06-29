@@ -45,7 +45,7 @@ const SearchBar = ({
     if (selected?.name === todaysSong?.name) {
       correctSelected(true);
     } else {
-      if (selected?.artist === todaysSong?.artist) {
+      if (todaysSong?.artist.includes(selected?.artist)) {
         guessContext?.addGuess({ song: selected?.name, status: "partial" });
       } else {
         guessContext?.addGuess({ song: selected?.name, status: "incorrect" });
@@ -111,7 +111,7 @@ const SearchBar = ({
           className={`text-md rounded-md ${
             isPlaying
               ? "cursor-not-allowed bg-slate-800/90"
-              : "hover:bg-slate-600` bg-slate-700"
+              : "hover:bg-slate-600` bg-slate-900"
           }  p-2 tracking-wider text-white`}
           onClick={skipClicked}
           disabled={isPlaying}

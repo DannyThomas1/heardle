@@ -2,33 +2,37 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { LoadingSpinner } from "./Loading";
-import { api } from "~/utils/api";
+import { RouterOutputs, api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
-import { UserStats } from "~/pages/types/types";
 import { toast } from "react-hot-toast";
+import useUserStatsStore from "~/stores/stats";
+type Song = RouterOutputs["songs"]["todaysSong"];
 
-function SongCard({ guessNum }: { guessNum: number }) {
-  const { data: todaysSong } = api.songs.todaysSong.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-  });
+function SongCard({
+  guessNum,
+  todaysSong,
+}: {
+  guessNum: number;
+  todaysSong: Song;
+}) {
+  const [updateScoreLogged, scoreLogged] = useUserStatsStore((state) => [
+    state.updateScoreLogged,
+    state.scoreLogged,
+  ]);
+  const { isSignedIn } = useUser();
+  const [loading, setLoading] = useState(true);
+  const [songArtwork, setSongArtwork] = useState("");
 
   const { mutate } = api.songs.submitScore.useMutation({
     onSuccess: () => {
       toast.success("Score saved!");
-      const stats = JSON.parse(localStorage.getItem("userStats")!);
-      stats.scoreLogged = true;
-      localStorage.setItem("userStats", JSON.stringify(stats));
-      setLoggedScore(true);
+      updateScoreLogged(true);
     },
     onError: (err) => {
       console.log(err);
-      toast.error("Error saving score, please try again later");
+      toast.error("A score already exists for this song!");
     },
   });
-  const { isSignedIn } = useUser();
-  const [loggedScore, setLoggedScore] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [songArtwork, setSongArtwork] = useState("");
 
   useEffect(() => {
     if (!todaysSong) return;
@@ -50,13 +54,6 @@ function SongCard({ guessNum }: { guessNum: number }) {
       console.log(err);
     }
   }, [todaysSong]);
-
-  useEffect(() => {
-    const stats = localStorage.getItem("userStats");
-    if (!stats) return;
-    const userStats = JSON.parse(stats) as UserStats;
-    if (userStats?.scoreLogged) setLoggedScore(true);
-  }, []);
 
   const saveScore = () => {
     if (!todaysSong) return;
@@ -166,7 +163,7 @@ function SongCard({ guessNum }: { guessNum: number }) {
           </div>
         )}
 
-        {isSignedIn && !loggedScore && (
+        {isSignedIn && !scoreLogged && (
           <div>
             <button
               className="border-1 w-32 rounded-md bg-green-500 p-1"
