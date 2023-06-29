@@ -1,6 +1,4 @@
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import Player from "./Player";
 import {
   FIFTH_CLIP,
   FIRST_CLIP,
@@ -13,11 +11,9 @@ import {
 export const Guess = ({
   guessNum,
   isPlaying,
-  counter = 0,
 }: {
   guessNum: number;
   isPlaying: boolean;
-  counter: number;
 }) => {
   const [playWidth, setPlayWidth] = useState((2000 / 17000) * 100);
 

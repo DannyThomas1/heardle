@@ -122,12 +122,15 @@ function Player({
   const reset = async (counterID: string, timerID: string) => {
     setIsPlaying(false);
     setCounter(0);
+    player?.seekTo(0);
     clearInterval(counterID);
     clearTimeout(timerID);
   };
 
-  const skipSelected = async () => {
-    await reset(counterID, timerID);
+  const skipSelected = async (counterID: string, timerID: string) => {
+    if (isPlaying) {
+      await reset(counterID, timerID);
+    }
 
     let numGuesses = guessNum;
     if (numGuesses !== 6) {
@@ -140,7 +143,11 @@ function Player({
     }
   };
 
-  const guessSubmitted = () => {
+  const guessSubmitted = async (counterID: string, timerID: string) => {
+    if (isPlaying) {
+      await reset(counterID, timerID);
+    }
+
     let numGuesses = guessNum;
     if (numGuesses !== 6) {
       setGuessNum((currentGuessNum) => currentGuessNum + 1);
@@ -151,19 +158,6 @@ function Player({
       updateGuessNum(7);
     }
   };
-
-  // adjust playback in SC player to match isPlaying state
-  useEffect(() => {
-    if (!player) return; // player loaded async - make sure available
-
-    player.isPaused((playerIsPaused: boolean) => {
-      if (isPlaying && playerIsPaused) {
-        player.play();
-      } else if (!isPlaying && !playerIsPaused) {
-        player.pause();
-      }
-    });
-  }, [isPlaying]);
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
@@ -176,7 +170,7 @@ function Player({
         onLoad={() => setLoading(false)}
       ></iframe>
 
-      <Guess guessNum={guessNum} isPlaying={isPlaying} counter={counter} />
+      <Guess guessNum={guessNum} isPlaying={isPlaying} />
 
       <div className="flex w-full items-center justify-between">
         <div>0:{String(counter).padStart(2, "0")}</div>
@@ -201,12 +195,11 @@ function Player({
 
       <div className="mt-3 w-full">
         <SearchBar
-          skipSelected={skipSelected}
-          guessSubmitted={guessSubmitted}
+          skipSelected={() => skipSelected(counterID, timerID)}
+          guessSubmitted={() => guessSubmitted(counterID, timerID)}
           correctSelected={() => updateCorrectGuess(true)}
           guessNumber={guessNum}
           todaysSong={todaysSong}
-          isPlaying={isPlaying}
         />
       </div>
     </div>
