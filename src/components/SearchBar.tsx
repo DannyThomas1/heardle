@@ -46,7 +46,7 @@ const SearchBar = ({
       correctSelected(true);
     } else {
       //Check against only the main artist
-      const artist = selected?.artist?.split("Feauturing")[0]?.trim();
+      const artist = selected?.artist?.split("Featuring")[0]?.trim();
       if (todaysSong?.artist.includes(artist || "")) {
         guessContext?.addGuess({ song: selected?.name, status: "partial" });
       } else {
