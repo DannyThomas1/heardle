@@ -53,7 +53,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (!todaysSong) return;
     //Check if date/song has changed
-    if (date !== new Date().toLocaleDateString() && songID !== todaysSong.id) {
+    if (songID !== todaysSong.id) {
       resetState(todaysSong?.id, new Date().toLocaleDateString());
     } else {
       if (guessList?.length > 0) updateGuessNum(guessList.length + 1);
